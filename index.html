@@ -90,32 +90,42 @@ document.addEventListener("DOMContentLoaded",function(){
 
 function check(){
   var name=document.getElementById("name-input").value.trim();
-  var code=document.getElementById("code-input").value.trim().toUpperCase();
+  var code=document.getElementById("code-input").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(!name){showErr("Isi nama kamu dulu");shake();return;}
-  if(!code||code.length<8){showErr("Kode akses harus 8 karakter");shake();return;}
+  if(!code||code.length<6){showErr("Kode akses tidak valid");shake();return;}
   var btn=document.getElementById("lb2");
   btn.disabled=true;btn.textContent="Memverifikasi...";
-  var clean=name.toUpperCase().replace(/[^A-Z0-9]/g,"");
-  crypto.subtle.digest("SHA-256",new TextEncoder().encode(SK+":"+clean))
-    .then(function(buf){
-      var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");
-      var expected="";
-      for(var i=0;i<32;i+=4){expected+=hex[i];}
-      expected=expected.toUpperCase();
-      if(code===expected){
-        try{sessionStorage.setItem("toms_univ","1");}catch(e){}
-        showSucc("&#10003; Terverifikasi! Membuka kalkulator...");
-        btn.style.background="#00C853";
-        setTimeout(loadApp,800);
-      } else {
-        btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
-        showErr("&#10060; Nama atau kode salah. Pastikan nama sama persis dengan yang kamu berikan ke penjual.");
-        shake();
-      }
-    }).catch(function(){
+  var clean=name.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  
+  function verify(hex){
+    var expected="";
+    for(var i=0;i<32;i+=4){expected+=hex[i];}
+    expected=expected.toUpperCase();
+    if(code===expected){
+      try{sessionStorage.setItem("toms_univ","1");}catch(e){}
+      showSucc("Terverifikasi! Membuka kalkulator...");
+      btn.style.background="#00C853";
+      setTimeout(loadApp,800);
+    } else {
       btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
-      showErr("Error verifikasi. Coba lagi.");
-    });
+      showErr("Nama atau kode salah. Pastikan nama sama persis dengan yang kamu berikan ke penjual (huruf besar/kecil tidak masalah).");
+      shake();
+    }
+  }
+  
+  if(window.crypto&&window.crypto.subtle){
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(SK+":"+clean))
+      .then(function(buf){
+        var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");
+        verify(hex);
+      }).catch(function(e){
+        btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
+        showErr("Error: "+e.message+". Coba pakai Chrome/Firefox.");
+      });
+  } else {
+    btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
+    showErr("Browser tidak mendukung verifikasi. Pakai Chrome atau Firefox.");
+  }
 }
 
 function showErr(msg){
