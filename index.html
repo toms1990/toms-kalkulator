@@ -19,16 +19,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
 .succ{display:none;background:#F0FDF4;border:1px solid #86EFAC;color:#166534;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:14px}
 .fl{font-size:11px;font-weight:700;color:#6B7280;text-align:left;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
 .iw{position:relative;margin-bottom:12px}
-.pi{width:100%;padding:14px 50px 14px 16px;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:12px;font-size:16px;font-family:inherit;color:#111;outline:none;transition:all .2s;-webkit-appearance:none;letter-spacing:1px}
+.pi{width:100%;padding:14px 16px;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:12px;font-size:16px;font-family:inherit;color:#111;outline:none;transition:all .2s;-webkit-appearance:none}
 .pi:focus{border-color:#EE4D2D;background:#fff;box-shadow:0 0 0 3px rgba(238,77,45,.1)}
-.eb{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:5px;color:#9CA3AF;-webkit-appearance:none;line-height:1}
 .lb2{width:100%;padding:15px;background:linear-gradient(135deg,#EE4D2D,#FF6B47);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(238,77,45,.4);-webkit-appearance:none;font-family:inherit;margin-bottom:4px}
 .lb2:active{transform:scale(.97)}.lb2:disabled{opacity:.6;transform:none}
 .ht{font-size:11px;color:#9CA3AF;margin-top:18px;line-height:1.7;border-top:1px solid #F3F4F6;padding-top:14px}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:20px;text-align:left}
 .fi{background:#F9FAFB;border-radius:10px;padding:10px 11px}
 .fe{font-size:15px;margin-bottom:2px}.ft{font-size:11px;font-weight:700;color:#374151}.fd{font-size:10px;color:#9CA3AF}
-.info-box{background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:left;font-size:12px;color:#0369A1;line-height:1.6}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 .shake{animation:shake .4s ease}
 #ac{display:none;position:fixed;inset:0;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -46,99 +44,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-seri
     <div class="fi"><div class="fe">&#128230;</div><div class="ft">Hitung Massal</div><div class="fd">Banyak produk</div></div>
     <div class="fi"><div class="fe">&#128226;</div><div class="ft">Simulasi Iklan</div><div class="fd">ROAS &amp; Break Even</div></div>
   </div>
-  <div class="info-box">&#128161; Masukkan nama kamu persis seperti yang kamu berikan ke penjual, lalu masukkan kode akses yang dikirim penjual.</div>
   <div class="em" id="em"></div>
   <div class="succ" id="succ"></div>
-  <div class="fl">Nama Kamu (sesuai yang diberikan ke penjual)</div>
-  <div class="iw"><input type="text" class="pi" id="name-input" placeholder="cth: Budi Santoso" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" style="letter-spacing:0"></div>
-  <div class="fl">Kode Akses (8 karakter dari penjual)</div>
-  <div class="iw">
-    <input type="text" class="pi" id="code-input" placeholder="cth: A3F8C2B1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" maxlength="8">
-    <button class="eb" id="eb" type="button">&#128065;</button>
-  </div>
+  <div class="fl">Nama kamu (sesuai yang diberikan ke penjual)</div>
+  <div class="iw"><input type="text" class="pi" id="ni" placeholder="cth: Budi Santoso" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false"></div>
+  <div class="fl">Kode akses dari penjual (8 karakter)</div>
+  <div class="iw"><input type="text" class="pi" id="ci" placeholder="cth: D71BC461" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" maxlength="8"></div>
   <button class="lb2" id="lb2" type="button">&#128275; Buka Kalkulator</button>
   <div class="ht">Kode akses dikirim penjual setelah konfirmasi pembayaran<br><strong>&#169; 2026 TOMS Tools</strong> &bull; All rights reserved</div>
 </div>
 <div id="ac"></div>
 <script>
 var SK="TOMS"+"77X9"+"K2SE"+"CRET";
-var eo=false;
-(function(){try{if(sessionStorage.getItem("toms_univ")==="1"){loadApp();}}catch(e){}})();
 
-// Auto-uppercase code input
-document.getElementById("code-input").addEventListener("input",function(){
-  var v=this.value.toUpperCase().replace(/[^A-Z0-9]/g,"");
-  this.value=v.substring(0,8);
+document.getElementById("ci").addEventListener("input",function(){
+  this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,"").substring(0,8);
 });
-
-document.getElementById("eb").addEventListener("click",function(){
-  eo=!eo;
-  var ci=document.getElementById("code-input");
-  // Toggle visibility by changing letter-spacing
-  ci.style.letterSpacing=eo?"0":"3px";
-  document.getElementById("eb").innerHTML=eo?"&#128064;":"&#128065;";
-});
-
 document.getElementById("lb2").addEventListener("click",check);
-["name-input","code-input"].forEach(function(id){
-  document.getElementById(id).addEventListener("keydown",function(e){if(e.key==="Enter")check();});
-});
-
-document.addEventListener("DOMContentLoaded",function(){
-  setTimeout(function(){document.getElementById("name-input").focus();},500);
-});
+document.getElementById("ni").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("ci").focus();});
+document.getElementById("ci").addEventListener("keydown",function(e){if(e.key==="Enter")check();});
+setTimeout(function(){document.getElementById("ni").focus();},400);
 
 function check(){
-  var name=document.getElementById("name-input").value.trim();
-  var code=document.getElementById("code-input").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  var name=document.getElementById("ni").value.trim();
+  var code=document.getElementById("ci").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(!name){showErr("Isi nama kamu dulu");shake();return;}
-  if(!code||code.length<6){showErr("Kode akses tidak valid");shake();return;}
+  if(code.length<8){showErr("Kode akses harus 8 karakter");shake();return;}
   var btn=document.getElementById("lb2");
   btn.disabled=true;btn.textContent="Memverifikasi...";
-  var clean=name.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
-  
-  function verify(hex){
-    var expected="";
-    for(var i=0;i<32;i+=4){expected+=hex[i];}
-    expected=expected.toUpperCase();
+  var clean=name.toUpperCase().replace(/[^A-Z0-9]/g,"");
+  // Use crypto.subtle (available on HTTPS / GitHub Pages)
+  var enc=new TextEncoder().encode(SK+":"+clean);
+  crypto.subtle.digest("SHA-256",enc).then(function(buf){
+    var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");
+    var expected=hex.substring(0,8).toUpperCase();
     if(code===expected){
-      try{sessionStorage.setItem("toms_univ","1");}catch(e){}
+      try{sessionStorage.setItem("toms_v4","1");}catch(e){}
       showSucc("Terverifikasi! Membuka kalkulator...");
       btn.style.background="#00C853";
       setTimeout(loadApp,800);
     } else {
       btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
-      showErr("Nama atau kode salah. Pastikan nama sama persis dengan yang kamu berikan ke penjual (huruf besar/kecil tidak masalah).");
+      showErr("Nama atau kode salah. Nama harus sama persis dengan yang diberikan ke penjual.");
       shake();
     }
-  }
-  
-  if(window.crypto&&window.crypto.subtle){
-    crypto.subtle.digest("SHA-256",new TextEncoder().encode(SK+":"+clean))
-      .then(function(buf){
-        var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");
-        verify(hex);
-      }).catch(function(e){
-        btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
-        showErr("Error: "+e.message+". Coba pakai Chrome/Firefox.");
-      });
-  } else {
+  }).catch(function(e){
     btn.disabled=false;btn.innerHTML="&#128275; Buka Kalkulator";
-    showErr("Browser tidak mendukung verifikasi. Pakai Chrome atau Firefox.");
-  }
+    showErr("Error: "+e+". Pastikan buka via HTTPS (https://toms1990.github.io/...)");
+  });
 }
-
-function showErr(msg){
-  document.getElementById("succ").style.display="none";
-  var em=document.getElementById("em");em.innerHTML=msg;em.style.display="block";
-}
-function showSucc(msg){
-  document.getElementById("em").style.display="none";
-  var su=document.getElementById("succ");su.innerHTML=msg;su.style.display="block";
-}
-function shake(){
-  var c=document.getElementById("lc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");
-}
+function showErr(msg){document.getElementById("succ").style.display="none";var em=document.getElementById("em");em.textContent=msg;em.style.display="block";}
+function showSucc(msg){document.getElementById("em").style.display="none";var su=document.getElementById("succ");su.textContent=msg;su.style.display="block";}
+function shake(){var c=document.getElementById("lc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");}
 function loadApp(){
   document.getElementById("lc").style.display="none";
   document.body.style.cssText="margin:0;padding:0;background:#F0F2F5;display:block";
